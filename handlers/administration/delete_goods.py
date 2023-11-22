@@ -1,4 +1,5 @@
 from aiogram import types
+from aiogram.utils.exceptions import MessageCantBeEdited
 from app import dp, bot
 from loader import storage
 from utils.database.connection import session, Database
@@ -16,7 +17,6 @@ async def get_all_goods():
 
 
 # Функция для обновления сообщения с кнопками
-# Измененная функция update_buttons
 async def update_buttons(message: types.Message, start_index, goods_data):
     keyboard = types.InlineKeyboardMarkup(row_width=1)
 
@@ -45,7 +45,19 @@ async def update_buttons(message: types.Message, start_index, goods_data):
     user_data['start_index'] = start_index
     await storage.set_data(chat=message.chat.id, data=user_data)
 
-    await bot.send_message(message.chat.id, text='Какой товар вы хотите удалить?', reply_markup=keyboard)
+    try:
+        await bot.edit_message_text(
+            chat_id=message.chat.id,
+            message_id=message.message_id,
+            text="Який товар ви бажаєте видалити?",
+            reply_markup=keyboard
+        )
+    except MessageCantBeEdited:
+        await bot.send_message(
+            chat_id=message.chat.id,
+            text="Який товар ви бажаєте видалити?",
+            reply_markup=keyboard
+        )
 
 
 @dp.callback_query_handler(state=ToDelete.to_delete)
