@@ -12,9 +12,11 @@ session = Session()
 
 
 class Database(Base):
-    __tablename__ = 'users'
-    user_id = Column(BigInteger, primary_key=True)
+    __tablename__ = 'goods'
+    goods_id = Column(INTEGER, Sequence('tariff_id_seq', start=1, increment=1), primary_key=True)
+    user_id = Column(BigInteger, nullable=True)
     name = Column(String, nullable=True)
+    quantity = Column(BigInteger, nullable=True)
     price = Column(String, nullable=True)
     photo = Column(LargeBinary)
 
